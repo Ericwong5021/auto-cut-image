@@ -1,206 +1,233 @@
 # Auto Cut Image
 
-AI驱动的图像分割和背景处理库，支持本地模型和API调用。
+> AI 驱动的图片素材分割与背景处理 CLI/GUI 应用 | AI-powered image asset segmentation and background processing CLI/GUI application
 
-## 功能特性
+[English](#english) | [中文](#中文)
 
-- **图像加载和保存** - 支持 PNG、JPEG、WebP、TIFF 格式
-- **AI 图像分割** - 支持本地 ONNX 模型和 API 调用（OpenAI、Remove.bg）
-- **背景去除** - 使用分割掩码去除图像背景
-- **背景替换** - 替换背景为纯色或自定义颜色
-- **透明 PNG 生成** - 生成带透明背景的 PNG 图像
-- **图像裁剪** - 支持多种裁剪模式和预设
-- **批量处理** - 支持并发控制的批量图像处理
+---
 
-## 安装
+## English
 
-```bash
-npm install auto-cut-image
-```
+### Overview
 
-## 快速开始
+Auto Cut Image is an open-source tool that uses AI to automatically segment images into individual transparent background assets. It supports both CLI and GUI interfaces, built with Bun + TypeScript + Tauri.
 
-### 基本使用
+### Features
 
-```typescript
-import {
-  loadImage,
-  removeBackground,
-  createApiEngine
-} from 'auto-cut-image';
+- 🎯 **AI-Powered Segmentation** - Automatically detect and separate image elements
+- 🖼️ **Background Removal** - Remove backgrounds with AI precision
+- 🎨 **Background Replacement** - Change background colors or images
+- ✂️ **Smart Cropping** - Standard size cropping with aspect ratio preservation
+- 📦 **Multi-Format Export** - Export as PNG, JPG with transparency support
+- 💻 **CLI Tool** - Full-featured command line interface
+- 🖥️ **GUI Application** - Cross-platform desktop app (Windows & macOS)
+- 🔧 **Bun Runtime** - Fast, modern JavaScript runtime
 
-// 加载图像
-const image = await loadImage('input.jpg');
-
-// 创建 API 分割引擎
-const engine = createApiEngine({
-  provider: 'removebg',
-  apiKey: process.env.REMOVEBG_API_KEY!
-});
-
-// 获取分割掩码
-const mask = await engine.segment(image.buffer);
-
-// 去除背景
-const result = await removeBackground(image.buffer, mask);
-
-// 保存结果
-import { saveImage } from 'auto-cut-image';
-await saveImage(
-  { buffer: result, metadata: image.metadata },
-  'output.png'
-);
-```
-
-### 使用本地 ONNX 模型
-
-```typescript
-import { createLocalEngine } from 'auto-cut-image';
-
-const engine = createLocalEngine({
-  modelPath: './models/sam.onnx',
-  inputSize: 1024,
-  threshold: 0.5
-});
-
-await engine.initialize();
-const mask = await engine.segment(imageBuffer);
-await engine.dispose();
-```
-
-### 图像裁剪
-
-```typescript
-import {
-  cropImage,
-  cropToSquare,
-  cropWithPreset,
-  getCropPresets
-} from 'auto-cut-image';
-
-// 自定义裁剪
-const cropped = await cropImage(buffer, {
-  x: 10,
-  y: 10,
-  width: 100,
-  height: 100
-});
-
-// 裁剪为正方形
-const square = await cropToSquare(buffer);
-
-// 使用预设裁剪
-const portrait = await cropWithPreset(buffer, 'portrait');
-
-// 查看可用预设
-const presets = getCropPresets();
-console.log(presets);
-// [
-//   { name: 'square', ratio: 1, description: '1:1 Square' },
-//   { name: 'portrait', ratio: 0.75, description: '3:4 Portrait' },
-//   ...
-// ]
-```
-
-### 批量处理
-
-```typescript
-import { batchProcess, getImageFiles } from 'auto-cut-image';
-
-// 获取目录中的所有图像
-const files = await getImageFiles('./input');
-
-// 批量处理
-const progress = await batchProcess(
-  files,
-  async (input) => {
-    // 处理逻辑
-    return input.buffer;
-  },
-  {
-    concurrency: 3,
-    outputDir: './output',
-    format: 'png',
-    quality: 90
-  },
-  (progress) => {
-    console.log(`${progress.completed}/${progress.total}`);
-  }
-);
-
-console.log(`完成: ${progress.completed}, 失败: ${progress.failed}`);
-```
-
-### 背景颜色替换
-
-```typescript
-import { replaceBackground } from 'auto-cut-image';
-
-const result = await replaceBackground(imageBuffer, mask, {
-  color: '#ff0000',  // 红色背景
-  opacity: 0.8       // 80% 不透明度
-});
-```
-
-## API 参考
-
-### 图像 I/O
-
-- `loadImage(filePath)` - 从文件加载图像
-- `loadImageFromBuffer(buffer)` - 从 buffer 加载图像
-- `saveImage(processed, outputPath, options?)` - 保存图像到文件
-- `getImageMetadata(buffer)` - 获取图像元数据
-- `resizeImage(buffer, maxWidth?, maxHeight?)` - 调整图像大小
-
-### 分割引擎
-
-- `createLocalEngine(config)` - 创建本地 ONNX 分割引擎
-- `createApiEngine(config)` - 创建 API 分割引擎
-
-### 背景处理
-
-- `removeBackground(imageBuffer, mask)` - 去除背景
-- `replaceBackground(imageBuffer, mask, options)` - 替换背景颜色
-- `generateTransparentPng(imageBuffer, mask)` - 生成透明 PNG
-- `createSimpleMask(imageBuffer, backgroundColor, tolerance?)` - 创建简单掩码
-
-### 裁剪
-
-- `cropImage(buffer, options)` - 自定义裁剪
-- `cropToAspectRatio(buffer, ratio)` - 按比例裁剪
-- `cropToSquare(buffer)` - 裁剪为正方形
-- `cropWithPreset(buffer, presetName)` - 使用预设裁剪
-- `smartCrop(buffer, padding?)` - 智能裁剪
-- `getCropPresets()` - 获取所有预设
-
-### 批量处理
-
-- `batchProcess(inputPaths, processFn, options, onProgress?)` - 批量处理
-- `getImageFiles(dirPath)` - 获取目录中的图像文件
-- `createBatchProcessor(options)` - 创建批处理器
-
-## 技术栈
-
-- [Sharp](https://sharp.pixelplumbing.com/) - 高性能图像处理
-- [ONNX Runtime](https://onnxruntime.ai/) - 本地 AI 模型推理
-- [Winston](https://github.com/winstonjs/winston) - 日志记录
-
-## 开发
+### Installation
 
 ```bash
+# Install globally
+bun install -g auto-cut-image
+
+# Or use directly
+bunx auto-cut-image
+```
+
+### Quick Start
+
+```bash
+# Segment an image
+auto-cut segment input.png --output ./output
+
+# Remove background
+auto-cut bg-remove photo.jpg --output transparent.png
+
+# Change background color
+auto-cut bg-replace image.png --color "#FF5733" --output result.png
+
+# Crop to standard size
+auto-cut crop image.png --width 800 --height 600 --output cropped.png
+```
+
+### CLI Commands
+
+| Command | Description |
+|:--------|:------------|
+| `auto-cut segment <input>` | Segment image into individual assets |
+| `auto-cut bg-remove <input>` | Remove image background |
+| `auto-cut bg-replace <input>` | Replace background with color/image |
+| `auto-cut crop <input>` | Crop image to specified dimensions |
+| `auto-cut batch <dir>` | Process multiple images in batch |
+
+### CLI Options
+
+```
+auto-cut [command] [options]
+
+Options:
+  --output, -o     Output file or directory (default: ./output)
+  --format, -f     Output format: png, jpg (default: png)
+  --quality, -q    Output quality 1-100 (default: 95)
+  --verbose, -v    Enable verbose logging
+  --help           Show help information
+  --version        Show version number
+```
+
+### Development Setup
+
+```bash
+# Clone the repository
+git clone https://github.com/Ericwong5021/auto-cut-image.git
+cd auto-cut-image
+
+# Install dependencies
+bun install
+
+# Build all packages
+bun run build
+
+# Run tests
+bun run test
+
+# Start development
+bun run dev
+```
+
+### Project Structure
+
+```
+auto-cut-image/
+├── packages/
+│   ├── core/          # Core image processing library
+│   ├── cli/           # Command line interface
+│   └── gui/           # Tauri GUI application
+├── docs/              # Documentation
+├── examples/          # Example images and scripts
+├── package.json       # Root workspace config
+├── tsconfig.json      # TypeScript config
+├── CONTRIBUTING.md    # Contribution guidelines
+├── CHANGELOG.md       # Version history
+└── LICENSE            # MIT License
+```
+
+### Contributing
+
+We welcome contributions! Please read our [Contributing Guidelines](CONTRIBUTING.md) before submitting a PR.
+
+### License
+
+MIT License - see [LICENSE](LICENSE) for details.
+
+---
+
+## 中文
+
+### 概述
+
+Auto Cut Image 是一个使用 AI 自动将图片分割为独立透明背景素材的开源工具。支持 CLI 和 GUI 两种界面，基于 Bun + TypeScript + Tauri 构建。
+
+### 功能特性
+
+- 🎯 **AI 智能分割** - 自动识别并分离图片中的各个元素
+- 🖼️ **背景去除** - 精准去除图片背景
+- 🎨 **背景替换** - 更换背景颜色或图片
+- ✂️ **智能裁剪** - 支持标准尺寸裁剪并保持宽高比
+- 📦 **多格式导出** - 支持 PNG、JPG 格式，支持透明通道
+- 💻 **命令行工具** - 功能完整的 CLI 界面
+- 🖥️ **桌面应用** - 跨平台 GUI 应用（Windows & macOS）
+- 🔧 **Bun 运行时** - 快速、现代的 JavaScript 运行时
+
+### 安装
+
+```bash
+# 全局安装
+bun install -g auto-cut-image
+
+# 或直接使用
+bunx auto-cut-image
+```
+
+### 快速开始
+
+```bash
+# 分割图片
+auto-cut segment input.png --output ./output
+
+# 去除背景
+auto-cut bg-remove photo.jpg --output transparent.png
+
+# 替换背景颜色
+auto-cut bg-replace image.png --color "#FF5733" --output result.png
+
+# 裁剪为标准尺寸
+auto-cut crop image.png --width 800 --height 600 --output cropped.png
+```
+
+### CLI 命令
+
+| 命令 | 说明 |
+|:-----|:-----|
+| `auto-cut segment <input>` | 将图片分割为独立素材 |
+| `auto-cut bg-remove <input>` | 去除图片背景 |
+| `auto-cut bg-replace <input>` | 替换背景颜色/图片 |
+| `auto-cut crop <input>` | 裁剪图片到指定尺寸 |
+| `auto-cut batch <dir>` | 批量处理多张图片 |
+
+### CLI 选项
+
+```
+auto-cut [command] [options]
+
+Options:
+  --output, -o     输出文件或目录（默认：./output）
+  --format, -f     输出格式：png, jpg（默认：png）
+  --quality, -q    输出质量 1-100（默认：95）
+  --verbose, -v    启用详细日志
+  --help           显示帮助信息
+  --version        显示版本号
+```
+
+### 开发环境
+
+```bash
+# 克隆仓库
+git clone https://github.com/Ericwong5021/auto-cut-image.git
+cd auto-cut-image
+
 # 安装依赖
-npm install
+bun install
+
+# 构建所有包
+bun run build
 
 # 运行测试
-npm test
+bun run test
 
-# 构建
-npm run build
-
-# 清理
-npm run clean
+# 启动开发
+bun run dev
 ```
 
-## License
+### 项目结构
 
-MIT
+```
+auto-cut-image/
+├── packages/
+│   ├── core/          # 核心图像处理库
+│   ├── cli/           # 命令行界面
+│   └── gui/           # Tauri GUI 应用程序
+├── docs/              # 文档
+├── examples/          # 示例图片和脚本
+├── package.json       # 根工作区配置
+├── tsconfig.json      # TypeScript 配置
+├ CONTRIBUTING.md    # 贡献指南
+├── CHANGELOG.md       # 版本历史
+└── LICENSE            # MIT 许可证
+```
+
+### 贡献
+
+欢迎贡献代码！请先阅读[贡献指南](CONTRIBUTING.md)。
+
+### 许可证
+
+MIT 许可证 - 详见 [LICENSE](LICENSE)。
