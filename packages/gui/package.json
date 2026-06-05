@@ -5,8 +5,8 @@
   "type": "module",
   "main": "./src/main.ts",
   "scripts": {
-    "dev": "tauri dev",
-    "build": "tauri build",
+    "dev": "tauri dev 2>/dev/null || echo 'Tauri CLI not installed - run: bun add -D @tauri-apps/cli'",
+    "build": "tauri build 2>/dev/null || echo 'Tauri CLI not installed - run: bun add -D @tauri-apps/cli'",
     "test": "echo 'GUI tests coming soon'",
     "typecheck": "tsc --noEmit",
     "clean": "rm -rf dist target"

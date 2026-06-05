@@ -14,7 +14,7 @@
     "lint:fix": "eslint . --fix",
     "format": "prettier --write .",
     "format:check": "prettier --check .",
-    "typecheck": "bun run --recursive --filter '@auto-cut/*' typecheck",
+    "typecheck": "bun run --filter '@auto-cut/core' build && bun run --recursive --filter '@auto-cut/*' typecheck",
     "clean": "bun run --recursive --filter '@auto-cut/*' clean"
   },
   "devDependencies": {

@@ -31,7 +31,10 @@ async function main() {
     'input/photo.jpg',
     'output/transparent.png',
   );
-  console.log('BG Remove result:', bgRemoveResult.success ? 'Success' : 'Failed');
+  console.log(
+    'BG Remove result:',
+    bgRemoveResult.success ? 'Success' : 'Failed',
+  );
 
   // Example 3: Replace background color
   console.log('\n3. Replacing background...');
@@ -40,7 +43,10 @@ async function main() {
     'output/bg_replaced.png',
     '#FF5733',
   );
-  console.log('BG Replace result:', bgReplaceResult.success ? 'Success' : 'Failed');
+  console.log(
+    'BG Replace result:',
+    bgReplaceResult.success ? 'Success' : 'Failed',
+  );
 
   // Example 4: Crop image
   console.log('\n4. Cropping image...');

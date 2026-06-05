@@ -20,11 +20,11 @@ auto-cut segment <input> [options]
 
 **Options:**
 
-| Option | Description | Default |
-|:-------|:------------|:--------|
-| `-o, --output <dir>` | Output directory | `./output` |
-| `-f, --format <format>` | Output format (png\|jpg) | `png` |
-| `-q, --quality <number>` | Output quality 1-100 | `95` |
+| Option                   | Description              | Default    |
+| :----------------------- | :----------------------- | :--------- |
+| `-o, --output <dir>`     | Output directory         | `./output` |
+| `-f, --format <format>`  | Output format (png\|jpg) | `png`      |
+| `-q, --quality <number>` | Output quality 1-100     | `95`       |
 
 **Example:**
 
@@ -44,8 +44,8 @@ auto-cut bg-remove <input> [options]
 
 **Options:**
 
-| Option | Description | Default |
-|:-------|:------------|:--------|
+| Option                | Description      | Default                     |
+| :-------------------- | :--------------- | :-------------------------- |
 | `-o, --output <file>` | Output file path | `<input>_transparent.<ext>` |
 
 **Example:**
@@ -66,10 +66,10 @@ auto-cut bg-replace <input> [options]
 
 **Options:**
 
-| Option | Description | Default |
-|:-------|:------------|:--------|
-| `-c, --color <color>` | Background color (hex or named) | `#FFFFFF` |
-| `-o, --output <file>` | Output file path | `<input>_bg_replaced.<ext>` |
+| Option                | Description                     | Default                     |
+| :-------------------- | :------------------------------ | :-------------------------- |
+| `-c, --color <color>` | Background color (hex or named) | `#FFFFFF`                   |
+| `-o, --output <file>` | Output file path                | `<input>_bg_replaced.<ext>` |
 
 **Example:**
 
@@ -89,12 +89,12 @@ auto-cut crop <input> [options]
 
 **Options:**
 
-| Option | Description | Default |
-|:-------|:------------|:--------|
-| `-W, --width <number>` | Target width | (required) |
-| `-H, --height <number>` | Target height | (required) |
-| `-p, --position <position>` | Crop position | `center` |
-| `-o, --output <file>` | Output file path | `<input>_cropped.<ext>` |
+| Option                      | Description      | Default                 |
+| :-------------------------- | :--------------- | :---------------------- |
+| `-W, --width <number>`      | Target width     | (required)              |
+| `-H, --height <number>`     | Target height    | (required)              |
+| `-p, --position <position>` | Crop position    | `center`                |
+| `-o, --output <file>`       | Output file path | `<input>_cropped.<ext>` |
 
 **Position values:** `center`, `top`, `bottom`, `left`, `right`
 
@@ -116,10 +116,10 @@ auto-cut batch <dir> [options]
 
 **Options:**
 
-| Option | Description | Default |
-|:-------|:------------|:--------|
-| `-o, --output <dir>` | Output directory | `./output` |
-| `-f, --format <format>` | Output format (png\|jpg) | `png` |
+| Option                  | Description              | Default    |
+| :---------------------- | :----------------------- | :--------- |
+| `-o, --output <dir>`    | Output directory         | `./output` |
+| `-f, --format <format>` | Output format (png\|jpg) | `png`      |
 
 **Example:**
 
@@ -129,18 +129,18 @@ auto-cut batch ./photos --output ./processed --format png
 
 ## Global Options
 
-| Option | Description |
-|:-------|:------------|
-| `-h, --help` | Display help information |
-| `-V, --version` | Display version number |
-| `-v, --verbose` | Enable verbose logging |
+| Option          | Description              |
+| :-------------- | :----------------------- |
+| `-h, --help`    | Display help information |
+| `-V, --version` | Display version number   |
+| `-v, --verbose` | Enable verbose logging   |
 
 ## Exit Codes
 
-| Code | Description |
-|:-----|:------------|
-| 0 | Success |
-| 1 | General error |
-| 2 | Invalid arguments |
-| 3 | File not found |
-| 4 | Processing error |
+| Code | Description       |
+| :--- | :---------------- |
+| 0    | Success           |
+| 1    | General error     |
+| 2    | Invalid arguments |
+| 3    | File not found    |
+| 4    | Processing error  |

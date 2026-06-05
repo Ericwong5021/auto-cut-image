@@ -17,7 +17,7 @@ Describe what documentation is missing or unclear.
 - [ ] CONTRIBUTING.md
 - [ ] API Documentation
 - [ ] CLI Help
-- [ ] Other: ___
+- [ ] Other: \_\_\_
 
 ## Suggested content / 建议内容
 
