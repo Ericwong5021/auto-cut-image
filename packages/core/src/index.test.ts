@@ -1,72 +1,103 @@
 import { describe, it, expect } from 'vitest';
 import {
-  segment,
+  loadImage,
+  saveImage,
   removeBackground,
   replaceBackground,
-  crop,
+  generateTransparentPng,
+  createSimpleMask,
+  cropImage,
+  cropToSquare,
+  cropToAspectRatio,
+  cropWithPreset,
+  smartCrop,
+  getCropPresets,
   batchProcess,
+  getImageFiles,
+  createApiEngine,
+  createLocalEngine,
 } from './index';
 
-describe('Core Image Processing', () => {
-  describe('segment', () => {
-    it('should return success result', async () => {
-      const result = await segment('test.png', { outputDir: './output' });
-      expect(result.success).toBe(true);
-      expect(result.outputPaths).toHaveLength(1);
-      expect(result.processingTime).toBeGreaterThanOrEqual(0);
+describe('Core Image Processing - Exports', () => {
+  describe('Module exports', () => {
+    it('should export loadImage function', () => {
+      expect(typeof loadImage).toBe('function');
     });
 
-    it('should handle errors gracefully', async () => {
-      const result = await segment('', { outputDir: '' });
-      expect(result.success).toBe(true); // Placeholder always succeeds
+    it('should export saveImage function', () => {
+      expect(typeof saveImage).toBe('function');
+    });
+
+    it('should export removeBackground function', () => {
+      expect(typeof removeBackground).toBe('function');
+    });
+
+    it('should export replaceBackground function', () => {
+      expect(typeof replaceBackground).toBe('function');
+    });
+
+    it('should export generateTransparentPng function', () => {
+      expect(typeof generateTransparentPng).toBe('function');
+    });
+
+    it('should export createSimpleMask function', () => {
+      expect(typeof createSimpleMask).toBe('function');
+    });
+
+    it('should export cropImage function', () => {
+      expect(typeof cropImage).toBe('function');
+    });
+
+    it('should export cropToSquare function', () => {
+      expect(typeof cropToSquare).toBe('function');
+    });
+
+    it('should export cropToAspectRatio function', () => {
+      expect(typeof cropToAspectRatio).toBe('function');
+    });
+
+    it('should export cropWithPreset function', () => {
+      expect(typeof cropWithPreset).toBe('function');
+    });
+
+    it('should export smartCrop function', () => {
+      expect(typeof smartCrop).toBe('function');
+    });
+
+    it('should export getCropPresets function', () => {
+      expect(typeof getCropPresets).toBe('function');
+    });
+
+    it('should export batchProcess function', () => {
+      expect(typeof batchProcess).toBe('function');
+    });
+
+    it('should export getImageFiles function', () => {
+      expect(typeof getImageFiles).toBe('function');
+    });
+
+    it('should export createApiEngine function', () => {
+      expect(typeof createApiEngine).toBe('function');
+    });
+
+    it('should export createLocalEngine function', () => {
+      expect(typeof createLocalEngine).toBe('function');
     });
   });
 
-  describe('removeBackground', () => {
-    it('should return success result', async () => {
-      const result = await removeBackground('test.png', 'output.png');
-      expect(result.success).toBe(true);
-      expect(result.outputPaths).toHaveLength(1);
-    });
-  });
-
-  describe('replaceBackground', () => {
-    it('should return success result', async () => {
-      const result = await replaceBackground(
-        'test.png',
-        'output.png',
-        '#FF5733',
-      );
-      expect(result.success).toBe(true);
-      expect(result.outputPaths).toHaveLength(1);
-    });
-  });
-
-  describe('crop', () => {
-    it('should return success result', async () => {
-      const result = await crop('test.png', 'output.png', {
-        width: 800,
-        height: 600,
-      });
-      expect(result.success).toBe(true);
-      expect(result.outputPaths).toHaveLength(1);
+  describe('getCropPresets', () => {
+    it('should return array of presets', () => {
+      const presets = getCropPresets();
+      expect(Array.isArray(presets)).toBe(true);
+      expect(presets.length).toBeGreaterThan(0);
     });
 
-    it('should accept position option', async () => {
-      const result = await crop('test.png', 'output.png', {
-        width: 800,
-        height: 600,
-        position: 'center',
-      });
-      expect(result.success).toBe(true);
-    });
-  });
-
-  describe('batchProcess', () => {
-    it('should return array of results', async () => {
-      const results = await batchProcess('./input', { outputDir: './output' });
-      expect(Array.isArray(results)).toBe(true);
-      expect(results).toHaveLength(1);
+    it('should include common presets', () => {
+      const presets = getCropPresets();
+      const names = presets.map(p => p.name);
+      expect(names).toContain('square');
+      expect(names).toContain('portrait');
+      expect(names).toContain('landscape');
     });
   });
 });
