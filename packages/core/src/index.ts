@@ -36,19 +36,25 @@ export {
   getImageMetadata,
   createProcessedImage,
   resizeImage,
-  SUPPORTED_FORMATS
+  SUPPORTED_FORMATS,
 } from './utils/image-io';
 
 // Segmentation engines
-export { LocalSegmentationEngine, createLocalEngine } from './engines/local-segmentation';
-export { ApiSegmentationEngine, createApiEngine } from './engines/api-segmentation';
+export {
+  LocalSegmentationEngine,
+  createLocalEngine,
+} from './engines/local-segmentation';
+export {
+  ApiSegmentationEngine,
+  createApiEngine,
+} from './engines/api-segmentation';
 
 // Background processing
 export {
   removeBackground,
   replaceBackground,
   generateTransparentPng,
-  createSimpleMask
+  createSimpleMask,
 } from './processors/background';
 
 // Crop functions
@@ -60,15 +66,11 @@ export {
   smartCrop,
   getCropPresets,
   getCropPreset,
-  CROP_PRESETS
+  CROP_PRESETS,
 } from './processors/crop';
 
 // Batch processing
-export {
-  batchProcess,
-  getImageFiles,
-  createBatchProcessor
-} from './batch';
+export { batchProcess, getImageFiles, createBatchProcessor } from './batch';
 
 // Logger
 export { logger, createChildLogger } from './utils/logger';

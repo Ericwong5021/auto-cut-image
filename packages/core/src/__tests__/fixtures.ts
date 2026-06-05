@@ -10,7 +10,7 @@ const FIXTURES_DIR = path.join(__dirname, '..', '__fixtures__');
 export async function createTestImage(
   width: number = 100,
   height: number = 100,
-  color: { r: number; g: number; b: number } = { r: 255, g: 0, b: 0 }
+  color: { r: number; g: number; b: number } = { r: 255, g: 0, b: 0 },
 ): Promise<Buffer> {
   const channels = 3;
   const data = Buffer.alloc(width * height * channels);
@@ -21,9 +21,12 @@ export async function createTestImage(
     data[i + 2] = color.b;
   }
 
-  return sharp.default(data, {
-    raw: { width, height, channels }
-  }).png().toBuffer();
+  return sharp
+    .default(data, {
+      raw: { width, height, channels },
+    })
+    .png()
+    .toBuffer();
 }
 
 /**
@@ -32,7 +35,12 @@ export async function createTestImage(
 export async function createTestImageWithAlpha(
   width: number = 100,
   height: number = 100,
-  color: { r: number; g: number; b: number; a: number } = { r: 255, g: 0, b: 0, a: 255 }
+  color: { r: number; g: number; b: number; a: number } = {
+    r: 255,
+    g: 0,
+    b: 0,
+    a: 255,
+  },
 ): Promise<Buffer> {
   const channels = 4;
   const data = Buffer.alloc(width * height * channels);
@@ -44,9 +52,12 @@ export async function createTestImageWithAlpha(
     data[i + 3] = color.a;
   }
 
-  return sharp.default(data, {
-    raw: { width, height, channels }
-  }).png().toBuffer();
+  return sharp
+    .default(data, {
+      raw: { width, height, channels },
+    })
+    .png()
+    .toBuffer();
 }
 
 /**
@@ -57,7 +68,7 @@ export async function createTestImageWithForeground(
   height: number = 200,
   bgColor: { r: number; g: number; b: number } = { r: 255, g: 255, b: 255 },
   fgColor: { r: number; g: number; b: number } = { r: 0, g: 0, b: 0 },
-  fgSize: number = 100
+  fgSize: number = 100,
 ): Promise<Buffer> {
   const channels = 3;
   const data = Buffer.alloc(width * height * channels);
@@ -69,7 +80,12 @@ export async function createTestImageWithForeground(
     for (let x = 0; x < width; x++) {
       const idx = (y * width + x) * channels;
 
-      if (x >= fgLeft && x < fgLeft + fgSize && y >= fgTop && y < fgTop + fgSize) {
+      if (
+        x >= fgLeft &&
+        x < fgLeft + fgSize &&
+        y >= fgTop &&
+        y < fgTop + fgSize
+      ) {
         data[idx] = fgColor.r;
         data[idx + 1] = fgColor.g;
         data[idx + 2] = fgColor.b;
@@ -81,9 +97,12 @@ export async function createTestImageWithForeground(
     }
   }
 
-  return sharp.default(data, {
-    raw: { width, height, channels }
-  }).png().toBuffer();
+  return sharp
+    .default(data, {
+      raw: { width, height, channels },
+    })
+    .png()
+    .toBuffer();
 }
 
 /**
@@ -92,7 +111,7 @@ export async function createTestImageWithForeground(
 export async function createTestMask(
   width: number = 100,
   height: number = 100,
-  fillPercent: number = 0.5
+  fillPercent: number = 0.5,
 ): Promise<Buffer> {
   const data = Buffer.alloc(width * height);
 
@@ -101,14 +120,19 @@ export async function createTestMask(
 
   for (let y = 0; y < height; y++) {
     for (let x = 0; x < width; x++) {
-      const dist = Math.sqrt(Math.pow(x - center.x, 2) + Math.pow(y - center.y, 2));
+      const dist = Math.sqrt(
+        Math.pow(x - center.x, 2) + Math.pow(y - center.y, 2),
+      );
       data[y * width + x] = dist < radius ? 255 : 0;
     }
   }
 
-  return sharp.default(data, {
-    raw: { width, height, channels: 1 }
-  }).png().toBuffer();
+  return sharp
+    .default(data, {
+      raw: { width, height, channels: 1 },
+    })
+    .png()
+    .toBuffer();
 }
 
 /**
@@ -116,7 +140,7 @@ export async function createTestMask(
  */
 export async function saveFixture(
   name: string,
-  buffer: Buffer
+  buffer: Buffer,
 ): Promise<string> {
   await fs.mkdir(FIXTURES_DIR, { recursive: true });
   const filePath = path.join(FIXTURES_DIR, name);
@@ -135,10 +159,19 @@ export async function createTestFixtures(): Promise<void> {
   const blueImage = await createTestImage(100, 100, { r: 0, g: 0, b: 255 });
   await saveFixture('blue.png', blueImage);
 
-  const gradientImage = await createTestImage(200, 150, { r: 128, g: 128, b: 128 });
+  const gradientImage = await createTestImage(200, 150, {
+    r: 128,
+    g: 128,
+    b: 128,
+  });
   await saveFixture('gradient.png', gradientImage);
 
-  const imageWithAlpha = await createTestImageWithAlpha(100, 100, { r: 255, g: 0, b: 0, a: 128 });
+  const imageWithAlpha = await createTestImageWithAlpha(100, 100, {
+    r: 255,
+    g: 0,
+    b: 0,
+    a: 128,
+  });
   await saveFixture('alpha.png', imageWithAlpha);
 
   const imageWithFg = await createTestImageWithForeground(200, 200);

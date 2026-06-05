@@ -94,7 +94,7 @@ describe('Core Image Processing - Exports', () => {
 
     it('should include common presets', () => {
       const presets = getCropPresets();
-      const names = presets.map(p => p.name);
+      const names = presets.map((p) => p.name);
       expect(names).toContain('square');
       expect(names).toContain('portrait');
       expect(names).toContain('landscape');

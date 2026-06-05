@@ -1,12 +1,22 @@
 import * as sharp from 'sharp';
 import * as fs from 'fs/promises';
 import * as path from 'path';
-import { ImageMetadata, ProcessedImage, SupportedFormat } from '../engines/types';
+import {
+  ImageMetadata,
+  ProcessedImage,
+  SupportedFormat,
+} from '../engines/types';
 import { createChildLogger } from './logger';
 
 const logger = createChildLogger('image-io');
 
-const SUPPORTED_FORMATS: SupportedFormat[] = ['png', 'jpeg', 'jpg', 'webp', 'tiff'];
+const SUPPORTED_FORMATS: SupportedFormat[] = [
+  'png',
+  'jpeg',
+  'jpg',
+  'webp',
+  'tiff',
+];
 
 /**
  * Load an image from file path
@@ -15,7 +25,9 @@ export async function loadImage(filePath: string): Promise<ProcessedImage> {
   const ext = path.extname(filePath).toLowerCase().slice(1) as SupportedFormat;
 
   if (!SUPPORTED_FORMATS.includes(ext)) {
-    throw new Error(`Unsupported format: ${ext}. Supported: ${SUPPORTED_FORMATS.join(', ')}`);
+    throw new Error(
+      `Unsupported format: ${ext}. Supported: ${SUPPORTED_FORMATS.join(', ')}`,
+    );
   }
 
   logger.info('Loading image', { path: filePath });
@@ -29,7 +41,9 @@ export async function loadImage(filePath: string): Promise<ProcessedImage> {
 /**
  * Load an image from buffer
  */
-export async function loadImageFromBuffer(buffer: Buffer): Promise<ProcessedImage> {
+export async function loadImageFromBuffer(
+  buffer: Buffer,
+): Promise<ProcessedImage> {
   const metadata = await getImageMetadata(buffer);
   return { buffer, metadata };
 }
@@ -40,7 +54,7 @@ export async function loadImageFromBuffer(buffer: Buffer): Promise<ProcessedImag
 export async function saveImage(
   processed: ProcessedImage,
   outputPath: string,
-  options?: { quality?: number }
+  options?: { quality?: number },
 ): Promise<void> {
   const format = path.extname(outputPath).toLowerCase().slice(1);
 
@@ -78,14 +92,16 @@ export async function getImageMetadata(buffer: Buffer): Promise<ImageMetadata> {
     format: (meta.format as ImageMetadata['format']) || 'png',
     channels: meta.channels || 4,
     hasAlpha: meta.hasAlpha ?? false,
-    density: meta.density
+    density: meta.density,
   };
 }
 
 /**
  * Create a ProcessedImage from buffer with metadata
  */
-export async function createProcessedImage(buffer: Buffer): Promise<ProcessedImage> {
+export async function createProcessedImage(
+  buffer: Buffer,
+): Promise<ProcessedImage> {
   const metadata = await getImageMetadata(buffer);
   return { buffer, metadata };
 }
@@ -96,7 +112,7 @@ export async function createProcessedImage(buffer: Buffer): Promise<ProcessedIma
 export async function resizeImage(
   buffer: Buffer,
   maxWidth?: number,
-  maxHeight?: number
+  maxHeight?: number,
 ): Promise<Buffer> {
   const metadata = await getImageMetadata(buffer);
 

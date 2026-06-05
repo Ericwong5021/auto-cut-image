@@ -7,7 +7,7 @@ import {
   smartCrop,
   getCropPresets,
   getCropPreset,
-  CROP_PRESETS
+  CROP_PRESETS,
 } from '../processors/crop';
 import { createTestImage } from './fixtures';
 
@@ -19,7 +19,7 @@ describe('Crop', () => {
         x: 10,
         y: 10,
         width: 50,
-        height: 50
+        height: 50,
       });
 
       const metadata = await sharp.default(cropped).metadata();
@@ -31,7 +31,7 @@ describe('Crop', () => {
       const buffer = await createTestImage(100, 100);
 
       await expect(
-        cropImage(buffer, { x: -10, y: 0, width: 50, height: 50 })
+        cropImage(buffer, { x: -10, y: 0, width: 50, height: 50 }),
       ).rejects.toThrow('non-negative');
     });
 
@@ -39,7 +39,7 @@ describe('Crop', () => {
       const buffer = await createTestImage(100, 100);
 
       await expect(
-        cropImage(buffer, { x: 50, y: 50, width: 100, height: 100 })
+        cropImage(buffer, { x: 50, y: 50, width: 100, height: 100 }),
       ).rejects.toThrow('exceeds');
     });
 
@@ -47,11 +47,11 @@ describe('Crop', () => {
       const buffer = await createTestImage(100, 100);
 
       await expect(
-        cropImage(buffer, { x: 0, y: 0, width: 0, height: 50 })
+        cropImage(buffer, { x: 0, y: 0, width: 0, height: 50 }),
       ).rejects.toThrow('positive');
 
       await expect(
-        cropImage(buffer, { x: 0, y: 0, width: 50, height: -10 })
+        cropImage(buffer, { x: 0, y: 0, width: 50, height: -10 }),
       ).rejects.toThrow('positive');
     });
   });
@@ -108,7 +108,9 @@ describe('Crop', () => {
     it('should throw error for unknown preset', async () => {
       const buffer = await createTestImage(100, 100);
 
-      await expect(cropWithPreset(buffer, 'unknown')).rejects.toThrow('Unknown preset');
+      await expect(cropWithPreset(buffer, 'unknown')).rejects.toThrow(
+        'Unknown preset',
+      );
     });
   });
 
@@ -162,7 +164,7 @@ describe('Crop', () => {
 
   describe('CROP_PRESETS', () => {
     it('should include common presets', () => {
-      const names = CROP_PRESETS.map(p => p.name);
+      const names = CROP_PRESETS.map((p) => p.name);
       expect(names).toContain('square');
       expect(names).toContain('portrait');
       expect(names).toContain('landscape');

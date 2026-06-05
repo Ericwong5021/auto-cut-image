@@ -12,11 +12,23 @@ export const CROP_PRESETS: CropPreset[] = [
   { name: 'portrait', ratio: 0.75, description: '3:4 Portrait' },
   { name: 'landscape', ratio: 1.333, description: '4:3 Landscape' },
   { name: 'wide', ratio: 1.778, description: '16:9 Wide' },
-  { name: 'ultrawide', ratio: 2.370, description: '21:9 Ultrawide' },
+  { name: 'ultrawide', ratio: 2.37, description: '21:9 Ultrawide' },
   { name: 'instagram', ratio: 1, description: 'Instagram Square' },
-  { name: 'instagram-story', ratio: 0.5625, description: 'Instagram Story (9:16)' },
-  { name: 'facebook-cover', ratio: 2.631, description: 'Facebook Cover (820x312)' },
-  { name: 'twitter-header', ratio: 3, description: 'Twitter Header (1500x500)' }
+  {
+    name: 'instagram-story',
+    ratio: 0.5625,
+    description: 'Instagram Story (9:16)',
+  },
+  {
+    name: 'facebook-cover',
+    ratio: 2.631,
+    description: 'Facebook Cover (820x312)',
+  },
+  {
+    name: 'twitter-header',
+    ratio: 3,
+    description: 'Twitter Header (1500x500)',
+  },
 ];
 
 /**
@@ -24,13 +36,13 @@ export const CROP_PRESETS: CropPreset[] = [
  */
 export async function cropImage(
   imageBuffer: Buffer,
-  options: CropOptions
+  options: CropOptions,
 ): Promise<Buffer> {
   logger.info('Cropping image', {
     x: options.x,
     y: options.y,
     width: options.width,
-    height: options.height
+    height: options.height,
   });
 
   // Validate crop options
@@ -52,12 +64,13 @@ export async function cropImage(
     throw new Error('Crop dimensions must be positive');
   }
 
-  return sharp.default(imageBuffer)
+  return sharp
+    .default(imageBuffer)
     .extract({
       left: options.x,
       top: options.y,
       width: options.width,
-      height: options.height
+      height: options.height,
     })
     .toBuffer();
 }
@@ -67,7 +80,7 @@ export async function cropImage(
  */
 export async function cropToAspectRatio(
   imageBuffer: Buffer,
-  targetRatio: number
+  targetRatio: number,
 ): Promise<Buffer> {
   logger.info('Cropping to aspect ratio', { ratio: targetRatio });
 
@@ -95,7 +108,7 @@ export async function cropToAspectRatio(
     x: left,
     y: top,
     width: newWidth,
-    height: newHeight
+    height: newHeight,
   });
 }
 
@@ -115,7 +128,7 @@ export async function cropToSquare(imageBuffer: Buffer): Promise<Buffer> {
     x: left,
     y: top,
     width: size,
-    height: size
+    height: size,
   });
 }
 
@@ -124,15 +137,20 @@ export async function cropToSquare(imageBuffer: Buffer): Promise<Buffer> {
  */
 export async function cropWithPreset(
   imageBuffer: Buffer,
-  presetName: string
+  presetName: string,
 ): Promise<Buffer> {
-  const preset = CROP_PRESETS.find(p => p.name === presetName);
+  const preset = CROP_PRESETS.find((p) => p.name === presetName);
 
   if (!preset) {
-    throw new Error(`Unknown preset: ${presetName}. Available: ${CROP_PRESETS.map(p => p.name).join(', ')}`);
+    throw new Error(
+      `Unknown preset: ${presetName}. Available: ${CROP_PRESETS.map((p) => p.name).join(', ')}`,
+    );
   }
 
-  logger.info('Cropping with preset', { preset: presetName, ratio: preset.ratio });
+  logger.info('Cropping with preset', {
+    preset: presetName,
+    ratio: preset.ratio,
+  });
   return cropToAspectRatio(imageBuffer, preset.ratio);
 }
 
@@ -141,7 +159,7 @@ export async function cropWithPreset(
  */
 export async function smartCrop(
   imageBuffer: Buffer,
-  padding: number = 0
+  padding: number = 0,
 ): Promise<Buffer> {
   logger.info('Smart cropping', { padding });
 
@@ -153,7 +171,8 @@ export async function smartCrop(
 
   // For transparent images, use alpha channel
   if (metadata.hasAlpha) {
-    const { data, info } = await sharp.default(imageBuffer)
+    const { data, info } = await sharp
+      .default(imageBuffer)
       .ensureAlpha()
       .raw()
       .toBuffer({ resolveWithObject: true });
@@ -185,7 +204,7 @@ export async function smartCrop(
       x: minX,
       y: minY,
       width: maxX - minX + 1,
-      height: maxY - minY + 1
+      height: maxY - minY + 1,
     });
   }
 
@@ -204,5 +223,5 @@ export function getCropPresets(): CropPreset[] {
  * Find preset by name
  */
 export function getCropPreset(name: string): CropPreset | undefined {
-  return CROP_PRESETS.find(p => p.name === name);
+  return CROP_PRESETS.find((p) => p.name === name);
 }

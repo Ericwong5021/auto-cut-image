@@ -25,7 +25,7 @@ describe('Batch Processing', () => {
       expect(files.length).toBeGreaterThan(0);
 
       // Should include PNG files
-      const pngFiles = files.filter(f => f.endsWith('.png'));
+      const pngFiles = files.filter((f) => f.endsWith('.png'));
       expect(pngFiles.length).toBeGreaterThan(0);
     });
 
@@ -45,7 +45,7 @@ describe('Batch Processing', () => {
       await fs.writeFile(textFile, 'test');
 
       const files = await getImageFiles(fixturesDir);
-      const textFiles = files.filter(f => f.endsWith('.txt'));
+      const textFiles = files.filter((f) => f.endsWith('.txt'));
       expect(textFiles.length).toBe(0);
 
       await fs.rm(textFile);
@@ -56,7 +56,7 @@ describe('Batch Processing', () => {
     it('should process multiple images', async () => {
       const inputPaths = [
         path.join(fixturesDir, 'red.png'),
-        path.join(fixturesDir, 'blue.png')
+        path.join(fixturesDir, 'blue.png'),
       ];
 
       const processFn = async (input: ProcessedImage) => {
@@ -66,7 +66,7 @@ describe('Batch Processing', () => {
 
       const progress = await batchProcess(inputPaths, processFn, {
         concurrency: 2,
-        outputDir
+        outputDir,
       });
 
       expect(progress.total).toBe(2);
@@ -78,7 +78,7 @@ describe('Batch Processing', () => {
       const inputPaths = [
         path.join(fixturesDir, 'red.png'),
         path.join(fixturesDir, 'nonexistent.png'),
-        path.join(fixturesDir, 'blue.png')
+        path.join(fixturesDir, 'blue.png'),
       ];
 
       const processFn = async (input: ProcessedImage) => {
@@ -87,7 +87,7 @@ describe('Batch Processing', () => {
 
       const progress = await batchProcess(inputPaths, processFn, {
         concurrency: 1,
-        outputDir
+        outputDir,
       });
 
       expect(progress.total).toBe(3);
@@ -103,12 +103,17 @@ describe('Batch Processing', () => {
         return input.buffer;
       };
 
-      await batchProcess(inputPaths, processFn, {
-        concurrency: 1,
-        outputDir
-      }, (progress) => {
-        progressUpdates.push({ ...progress });
-      });
+      await batchProcess(
+        inputPaths,
+        processFn,
+        {
+          concurrency: 1,
+          outputDir,
+        },
+        (progress) => {
+          progressUpdates.push({ ...progress });
+        },
+      );
 
       expect(progressUpdates.length).toBeGreaterThan(0);
     });
@@ -123,10 +128,13 @@ describe('Batch Processing', () => {
 
       await batchProcess(inputPaths, processFn, {
         concurrency: 1,
-        outputDir: newOutputDir
+        outputDir: newOutputDir,
       });
 
-      const exists = await fs.access(newOutputDir).then(() => true).catch(() => false);
+      const exists = await fs
+        .access(newOutputDir)
+        .then(() => true)
+        .catch(() => false);
       expect(exists).toBe(true);
 
       await fs.rm(newOutputDir, { recursive: true, force: true });
@@ -136,7 +144,7 @@ describe('Batch Processing', () => {
   describe('createBatchProcessor', () => {
     it('should create batch processor with default options', () => {
       const processor = createBatchProcessor({
-        outputDir
+        outputDir,
       });
 
       expect(processor).toBeDefined();
@@ -146,7 +154,7 @@ describe('Batch Processing', () => {
     it('should process images using processor', async () => {
       const processor = createBatchProcessor({
         concurrency: 2,
-        outputDir
+        outputDir,
       });
 
       const inputPaths = [path.join(fixturesDir, 'red.png')];

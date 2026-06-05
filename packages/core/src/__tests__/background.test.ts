@@ -1,6 +1,15 @@
 import * as sharp from 'sharp';
-import { removeBackground, replaceBackground, generateTransparentPng, createSimpleMask } from '../processors/background';
-import { createTestImage, createTestImageWithForeground, createTestMask } from './fixtures';
+import {
+  removeBackground,
+  replaceBackground,
+  generateTransparentPng,
+  createSimpleMask,
+} from '../processors/background';
+import {
+  createTestImage,
+  createTestImageWithForeground,
+  createTestMask,
+} from './fixtures';
 import { SegmentationResult } from '../engines/types';
 
 describe('Background Processing', () => {
@@ -12,7 +21,7 @@ describe('Background Processing', () => {
       const mask: SegmentationResult = {
         mask: maskBuffer,
         width: 100,
-        height: 100
+        height: 100,
       };
 
       const result = await removeBackground(imageBuffer, mask);
@@ -31,7 +40,7 @@ describe('Background Processing', () => {
       const mask: SegmentationResult = {
         mask: maskBuffer,
         width: 100,
-        height: 100
+        height: 100,
       };
 
       const result = await removeBackground(imageBuffer, mask);
@@ -47,11 +56,11 @@ describe('Background Processing', () => {
       const mask: SegmentationResult = {
         mask: maskBuffer,
         width: 100,
-        height: 100
+        height: 100,
       };
 
       const result = await replaceBackground(imageBuffer, mask, {
-        color: '#ff0000'
+        color: '#ff0000',
       });
 
       expect(result).toBeInstanceOf(Buffer);
@@ -68,18 +77,18 @@ describe('Background Processing', () => {
       const mask: SegmentationResult = {
         mask: maskBuffer,
         width: 50,
-        height: 50
+        height: 50,
       };
 
       // With #
       const result1 = await replaceBackground(imageBuffer, mask, {
-        color: '#ffffff'
+        color: '#ffffff',
       });
       expect(result1).toBeInstanceOf(Buffer);
 
       // Without #
       const result2 = await replaceBackground(imageBuffer, mask, {
-        color: '000000'
+        color: '000000',
       });
       expect(result2).toBeInstanceOf(Buffer);
     });
@@ -91,11 +100,11 @@ describe('Background Processing', () => {
       const mask: SegmentationResult = {
         mask: maskBuffer,
         width: 50,
-        height: 50
+        height: 50,
       };
 
       const result = await replaceBackground(imageBuffer, mask, {
-        color: '#fff'
+        color: '#fff',
       });
 
       expect(result).toBeInstanceOf(Buffer);
@@ -108,11 +117,11 @@ describe('Background Processing', () => {
       const mask: SegmentationResult = {
         mask: maskBuffer,
         width: 50,
-        height: 50
+        height: 50,
       };
 
       await expect(
-        replaceBackground(imageBuffer, mask, { color: 'invalid' })
+        replaceBackground(imageBuffer, mask, { color: 'invalid' }),
       ).rejects.toThrow('Invalid hex color');
     });
   });
@@ -125,7 +134,7 @@ describe('Background Processing', () => {
       const mask: SegmentationResult = {
         mask: maskBuffer,
         width: 100,
-        height: 100
+        height: 100,
       };
 
       const result = await generateTransparentPng(imageBuffer, mask);
@@ -142,9 +151,10 @@ describe('Background Processing', () => {
   describe('createSimpleMask', () => {
     it('should create mask from background color', async () => {
       const imageBuffer = await createTestImageWithForeground(
-        100, 100,
+        100,
+        100,
         { r: 255, g: 255, b: 255 }, // white background
-        { r: 0, g: 0, b: 0 }        // black foreground
+        { r: 0, g: 0, b: 0 }, // black foreground
       );
 
       const mask = await createSimpleMask(imageBuffer, '#ffffff', 30);
@@ -158,7 +168,11 @@ describe('Background Processing', () => {
     });
 
     it('should respect tolerance parameter', async () => {
-      const imageBuffer = await createTestImage(50, 50, { r: 200, g: 200, b: 200 });
+      const imageBuffer = await createTestImage(50, 50, {
+        r: 200,
+        g: 200,
+        b: 200,
+      });
 
       // Low tolerance - should mark most as background
       const maskLow = await createSimpleMask(imageBuffer, '#ffffff', 10);

@@ -42,12 +42,12 @@ export class LocalSegmentationEngine implements SegmentationEngine {
     try {
       this.session = await ort.InferenceSession.create(this.modelPath, {
         executionProviders: ['cpu'],
-        graphOptimizationLevel: 'all'
+        graphOptimizationLevel: 'all',
       });
 
       logger.info('ONNX session initialized', {
         inputs: this.session.inputNames,
-        outputs: this.session.outputNames
+        outputs: this.session.outputNames,
       });
     } catch (error) {
       logger.error('Failed to initialize ONNX session', { error });
@@ -59,7 +59,8 @@ export class LocalSegmentationEngine implements SegmentationEngine {
    * Preprocess image for model input
    */
   private async preprocessImage(buffer: Buffer): Promise<ort.Tensor> {
-    const resized = await sharp.default(buffer)
+    const resized = await sharp
+      .default(buffer)
       .resize(this.inputSize, this.inputSize, { fit: 'fill' })
       .removeAlpha()
       .raw()
@@ -71,11 +72,18 @@ export class LocalSegmentationEngine implements SegmentationEngine {
     for (let i = 0; i < resized.length; i += 3) {
       const pixel = i / 3;
       floatData[pixel] = resized[i] / 255.0; // R
-      floatData[this.inputSize * this.inputSize + pixel] = resized[i + 1] / 255.0; // G
-      floatData[this.inputSize * this.inputSize * 2 + pixel] = resized[i + 2] / 255.0; // B
+      floatData[this.inputSize * this.inputSize + pixel] =
+        resized[i + 1] / 255.0; // G
+      floatData[this.inputSize * this.inputSize * 2 + pixel] =
+        resized[i + 2] / 255.0; // B
     }
 
-    return new ort.Tensor('float32', floatData, [1, 3, this.inputSize, this.inputSize]);
+    return new ort.Tensor('float32', floatData, [
+      1,
+      3,
+      this.inputSize,
+      this.inputSize,
+    ]);
   }
 
   /**
@@ -84,7 +92,7 @@ export class LocalSegmentationEngine implements SegmentationEngine {
   private async postprocessOutput(
     output: ort.Tensor,
     originalWidth: number,
-    originalHeight: number
+    originalHeight: number,
   ): Promise<Buffer> {
     const outputData = output.data as Float32Array;
     const outputSize = output.dims[output.dims.length - 1];
@@ -106,9 +114,12 @@ export class LocalSegmentationEngine implements SegmentationEngine {
     }
 
     // Create mask image buffer
-    return sharp.default(maskData, {
-      raw: { width: originalWidth, height: originalHeight, channels: 1 }
-    }).png().toBuffer();
+    return sharp
+      .default(maskData, {
+        raw: { width: originalWidth, height: originalHeight, channels: 1 },
+      })
+      .png()
+      .toBuffer();
   }
 
   /**
@@ -125,7 +136,7 @@ export class LocalSegmentationEngine implements SegmentationEngine {
 
     logger.info('Starting segmentation', {
       width: originalWidth,
-      height: originalHeight
+      height: originalHeight,
     });
 
     // Preprocess
@@ -140,17 +151,21 @@ export class LocalSegmentationEngine implements SegmentationEngine {
     const output = results[outputName];
 
     // Postprocess
-    const maskBuffer = await this.postprocessOutput(output, originalWidth, originalHeight);
+    const maskBuffer = await this.postprocessOutput(
+      output,
+      originalWidth,
+      originalHeight,
+    );
 
     logger.info('Segmentation complete', {
-      maskSize: maskBuffer.length
+      maskSize: maskBuffer.length,
     });
 
     return {
       mask: maskBuffer,
       width: originalWidth,
       height: originalHeight,
-      confidence: this.threshold
+      confidence: this.threshold,
     };
   }
 
@@ -169,6 +184,8 @@ export class LocalSegmentationEngine implements SegmentationEngine {
 /**
  * Create a local segmentation engine
  */
-export function createLocalEngine(config: LocalSegmentationConfig): LocalSegmentationEngine {
+export function createLocalEngine(
+  config: LocalSegmentationConfig,
+): LocalSegmentationEngine {
   return new LocalSegmentationEngine(config);
 }

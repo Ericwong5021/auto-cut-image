@@ -1,5 +1,10 @@
 import * as sharp from 'sharp';
-import { SegmentationEngine, SegmentationResult, ApiSegmentationConfig, ApiProvider } from './types';
+import {
+  SegmentationEngine,
+  SegmentationResult,
+  ApiSegmentationConfig,
+  ApiProvider,
+} from './types';
 import { createChildLogger } from '../utils/logger';
 
 const logger = createChildLogger('api-segmentation');
@@ -33,16 +38,16 @@ export class ApiSegmentationEngine implements SegmentationEngine {
     const response = await fetch('https://api.openai.com/v1/images/edits', {
       method: 'POST',
       headers: {
-        'Authorization': `Bearer ${this.config.apiKey}`,
+        Authorization: `Bearer ${this.config.apiKey}`,
       },
-      body: this.createFormData(base64)
+      body: this.createFormData(base64),
     });
 
     if (!response.ok) {
       throw new Error(`OpenAI API error: ${response.status}`);
     }
 
-    const result = await response.json() as { data: Array<{ url: string }> };
+    const result = (await response.json()) as { data: Array<{ url: string }> };
 
     // Download the result image and extract mask
     const imageUrl = result.data[0]?.url;
@@ -58,7 +63,7 @@ export class ApiSegmentationEngine implements SegmentationEngine {
       mask: imageBuffer,
       width: metadata.width!,
       height: metadata.height!,
-      confidence: 0.8
+      confidence: 0.8,
     };
   }
 
@@ -69,8 +74,15 @@ export class ApiSegmentationEngine implements SegmentationEngine {
     const formData = new FormData();
     const binaryData = Buffer.from(base64Image, 'base64');
 
-    formData.append('image', new Blob([binaryData], { type: 'image/png' }), 'image.png');
-    formData.append('prompt', 'Remove the background, keep only the main subject');
+    formData.append(
+      'image',
+      new Blob([binaryData], { type: 'image/png' }),
+      'image.png',
+    );
+    formData.append(
+      'prompt',
+      'Remove the background, keep only the main subject',
+    );
     formData.append('n', '1');
     formData.append('size', '1024x1024');
 
@@ -80,7 +92,9 @@ export class ApiSegmentationEngine implements SegmentationEngine {
   /**
    * Segment using Remove.bg API
    */
-  private async segmentWithRemoveBg(input: Buffer): Promise<SegmentationResult> {
+  private async segmentWithRemoveBg(
+    input: Buffer,
+  ): Promise<SegmentationResult> {
     logger.info('Starting Remove.bg segmentation');
 
     const metadata = await sharp.default(input).metadata();
@@ -95,7 +109,7 @@ export class ApiSegmentationEngine implements SegmentationEngine {
       headers: {
         'X-Api-Key': this.config.apiKey,
       },
-      body: formData
+      body: formData,
     });
 
     if (!response.ok) {
@@ -107,7 +121,8 @@ export class ApiSegmentationEngine implements SegmentationEngine {
     const resultBuffer = Buffer.from(await response.arrayBuffer());
 
     // Extract alpha channel as mask
-    const { data: alphaData, info } = await sharp.default(resultBuffer)
+    const { data: alphaData, info } = await sharp
+      .default(resultBuffer)
       .ensureAlpha()
       .raw()
       .toBuffer({ resolveWithObject: true });
@@ -119,15 +134,18 @@ export class ApiSegmentationEngine implements SegmentationEngine {
       maskData[i] = alphaData[i * 4 + 3] > 128 ? 255 : 0;
     }
 
-    const maskBuffer = await sharp.default(maskData, {
-      raw: { width: info.width, height: info.height, channels: 1 }
-    }).png().toBuffer();
+    const maskBuffer = await sharp
+      .default(maskData, {
+        raw: { width: info.width, height: info.height, channels: 1 },
+      })
+      .png()
+      .toBuffer();
 
     return {
       mask: maskBuffer,
       width: info.width,
       height: info.height,
-      confidence: 0.9
+      confidence: 0.9,
     };
   }
 
@@ -149,6 +167,8 @@ export class ApiSegmentationEngine implements SegmentationEngine {
 /**
  * Create an API segmentation engine
  */
-export function createApiEngine(config: ApiSegmentationConfig): ApiSegmentationEngine {
+export function createApiEngine(
+  config: ApiSegmentationConfig,
+): ApiSegmentationEngine {
   return new ApiSegmentationEngine(config);
 }

@@ -51,13 +51,13 @@ auto-cut crop image.png --width 800 --height 600 --output cropped.png
 
 ### CLI Commands
 
-| Command | Description |
-|:--------|:------------|
-| `auto-cut segment <input>` | Segment image into individual assets |
-| `auto-cut bg-remove <input>` | Remove image background |
-| `auto-cut bg-replace <input>` | Replace background with color/image |
-| `auto-cut crop <input>` | Crop image to specified dimensions |
-| `auto-cut batch <dir>` | Process multiple images in batch |
+| Command                       | Description                          |
+| :---------------------------- | :----------------------------------- |
+| `auto-cut segment <input>`    | Segment image into individual assets |
+| `auto-cut bg-remove <input>`  | Remove image background              |
+| `auto-cut bg-replace <input>` | Replace background with color/image  |
+| `auto-cut crop <input>`       | Crop image to specified dimensions   |
+| `auto-cut batch <dir>`        | Process multiple images in batch     |
 
 ### CLI Options
 
@@ -165,13 +165,13 @@ auto-cut crop image.png --width 800 --height 600 --output cropped.png
 
 ### CLI 命令
 
-| 命令 | 说明 |
-|:-----|:-----|
-| `auto-cut segment <input>` | 将图片分割为独立素材 |
-| `auto-cut bg-remove <input>` | 去除图片背景 |
-| `auto-cut bg-replace <input>` | 替换背景颜色/图片 |
-| `auto-cut crop <input>` | 裁剪图片到指定尺寸 |
-| `auto-cut batch <dir>` | 批量处理多张图片 |
+| 命令                          | 说明                 |
+| :---------------------------- | :------------------- |
+| `auto-cut segment <input>`    | 将图片分割为独立素材 |
+| `auto-cut bg-remove <input>`  | 去除图片背景         |
+| `auto-cut bg-replace <input>` | 替换背景颜色/图片    |
+| `auto-cut crop <input>`       | 裁剪图片到指定尺寸   |
+| `auto-cut batch <dir>`        | 批量处理多张图片     |
 
 ### CLI 选项
 

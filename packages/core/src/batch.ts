@@ -1,6 +1,10 @@
 import * as fs from 'fs/promises';
 import * as path from 'path';
-import { BatchProcessOptions, BatchProgress, ProcessedImage } from './engines/types';
+import {
+  BatchProcessOptions,
+  BatchProgress,
+  ProcessedImage,
+} from './engines/types';
 import { loadImage, saveImage } from './utils/image-io';
 import { createChildLogger } from './utils/logger';
 
@@ -15,12 +19,12 @@ export async function batchProcess(
   inputPaths: string[],
   processFn: ProcessFunction,
   options: BatchProcessOptions,
-  onProgress?: (progress: BatchProgress) => void
+  onProgress?: (progress: BatchProgress) => void,
 ): Promise<BatchProgress> {
   logger.info('Starting batch processing', {
     total: inputPaths.length,
     concurrency: options.concurrency,
-    outputDir: options.outputDir
+    outputDir: options.outputDir,
   });
 
   // Ensure output directory exists
@@ -29,7 +33,7 @@ export async function batchProcess(
   const progress: BatchProgress = {
     total: inputPaths.length,
     completed: 0,
-    failed: 0
+    failed: 0,
   };
 
   // Process with concurrency control
@@ -51,22 +55,25 @@ export async function batchProcess(
         const ext = options.format || processed.metadata.format;
         const outputPath = path.join(
           options.outputDir,
-          `${path.parse(inputPath).name}.${ext}`
+          `${path.parse(inputPath).name}.${ext}`,
         );
 
         await saveImage(
           { buffer: resultBuffer, metadata: processed.metadata },
           outputPath,
-          { quality: options.quality }
+          { quality: options.quality },
         );
 
         progress.completed++;
-        logger.info('Image processed', { input: inputPath, output: outputPath });
+        logger.info('Image processed', {
+          input: inputPath,
+          output: outputPath,
+        });
       } catch (error) {
         progress.failed++;
         logger.error('Failed to process image', {
           path: inputPath,
-          error: error instanceof Error ? error.message : error
+          error: error instanceof Error ? error.message : error,
         });
       }
 
@@ -87,7 +94,7 @@ export async function batchProcess(
 
   logger.info('Batch processing complete', {
     completed: progress.completed,
-    failed: progress.failed
+    failed: progress.failed,
   });
 
   return progress;
@@ -121,20 +128,21 @@ export async function getImageFiles(dirPath: string): Promise<string[]> {
 /**
  * Create a batch processor with preset options
  */
-export function createBatchProcessor(
-  options: Partial<BatchProcessOptions>
-): {
-  process: (inputPaths: string[], processFn: ProcessFunction) => Promise<BatchProgress>;
+export function createBatchProcessor(options: Partial<BatchProcessOptions>): {
+  process: (
+    inputPaths: string[],
+    processFn: ProcessFunction,
+  ) => Promise<BatchProgress>;
 } {
   const fullOptions: BatchProcessOptions = {
     concurrency: options.concurrency ?? 3,
     outputDir: options.outputDir ?? './output',
     format: options.format,
-    quality: options.quality
+    quality: options.quality,
   };
 
   return {
     process: (inputPaths: string[], processFn: ProcessFunction) =>
-      batchProcess(inputPaths, processFn, fullOptions)
+      batchProcess(inputPaths, processFn, fullOptions),
   };
 }

@@ -1,5 +1,9 @@
 import * as sharp from 'sharp';
-import { SegmentationResult, BackgroundOptions, ProcessedImage } from '../engines/types';
+import {
+  SegmentationResult,
+  BackgroundOptions,
+  ProcessedImage,
+} from '../engines/types';
 import { createChildLogger } from '../utils/logger';
 
 const logger = createChildLogger('background');
@@ -9,27 +13,34 @@ const logger = createChildLogger('background');
  */
 export async function removeBackground(
   imageBuffer: Buffer,
-  mask: SegmentationResult
+  mask: SegmentationResult,
 ): Promise<Buffer> {
   logger.info('Removing background');
 
   // Ensure mask matches image dimensions
   const imageMetadata = await sharp.default(imageBuffer).metadata();
 
-  if (mask.width !== imageMetadata.width || mask.height !== imageMetadata.height) {
+  if (
+    mask.width !== imageMetadata.width ||
+    mask.height !== imageMetadata.height
+  ) {
     // Resize mask to match image
-    mask.mask = await sharp.default(mask.mask)
+    mask.mask = await sharp
+      .default(mask.mask)
       .resize(imageMetadata.width, imageMetadata.height)
       .toBuffer();
   }
 
   // Apply mask to create transparent background
-  const result = await sharp.default(imageBuffer)
+  const result = await sharp
+    .default(imageBuffer)
     .ensureAlpha()
-    .composite([{
-      input: mask.mask,
-      blend: 'dest-in' as const
-    }])
+    .composite([
+      {
+        input: mask.mask,
+        blend: 'dest-in' as const,
+      },
+    ])
     .png()
     .toBuffer();
 
@@ -43,7 +54,7 @@ export async function removeBackground(
 export async function replaceBackground(
   imageBuffer: Buffer,
   mask: SegmentationResult,
-  options: BackgroundOptions
+  options: BackgroundOptions,
 ): Promise<Buffer> {
   logger.info('Replacing background', { color: options.color });
 
@@ -53,14 +64,13 @@ export async function replaceBackground(
 
   // Ensure mask matches image dimensions
   if (mask.width !== width || mask.height !== height) {
-    mask.mask = await sharp.default(mask.mask)
-      .resize(width, height)
-      .toBuffer();
+    mask.mask = await sharp.default(mask.mask).resize(width, height).toBuffer();
   }
 
   // Parse color
   const { r, g, b } = parseHexColor(options.color);
-  const alpha = options.opacity !== undefined ? Math.round(options.opacity * 255) : 255;
+  const alpha =
+    options.opacity !== undefined ? Math.round(options.opacity * 255) : 255;
 
   // Create background image with solid color
   const background = Buffer.alloc(width * height * 4);
@@ -71,24 +81,29 @@ export async function replaceBackground(
     background[i + 3] = alpha;
   }
 
-  const backgroundBuffer = await sharp.default(background, {
-    raw: { width, height, channels: 4 }
-  }).png().toBuffer();
-
-  // Invert mask for background (we want the background area)
-  const invertedMask = await sharp.default(mask.mask)
-    .negate()
+  const backgroundBuffer = await sharp
+    .default(background, {
+      raw: { width, height, channels: 4 },
+    })
+    .png()
     .toBuffer();
 
+  // Invert mask for background (we want the background area)
+  const invertedMask = await sharp.default(mask.mask).negate().toBuffer();
+
   // Composite: background first, then foreground on top
-  const result = await sharp.default(backgroundBuffer)
-    .composite([{
-      input: imageBuffer,
-      blend: 'dest-in' as const
-    }, {
-      input: backgroundBuffer,
-      blend: 'over' as const
-    }])
+  const result = await sharp
+    .default(backgroundBuffer)
+    .composite([
+      {
+        input: imageBuffer,
+        blend: 'dest-in' as const,
+      },
+      {
+        input: backgroundBuffer,
+        blend: 'over' as const,
+      },
+    ])
     .png()
     .toBuffer();
 
@@ -101,26 +116,33 @@ export async function replaceBackground(
  */
 export async function generateTransparentPng(
   imageBuffer: Buffer,
-  mask: SegmentationResult
+  mask: SegmentationResult,
 ): Promise<Buffer> {
   logger.info('Generating transparent PNG');
 
   const imageMetadata = await sharp.default(imageBuffer).metadata();
 
   // Ensure mask matches image dimensions
-  if (mask.width !== imageMetadata.width || mask.height !== imageMetadata.height) {
-    mask.mask = await sharp.default(mask.mask)
+  if (
+    mask.width !== imageMetadata.width ||
+    mask.height !== imageMetadata.height
+  ) {
+    mask.mask = await sharp
+      .default(mask.mask)
       .resize(imageMetadata.width, imageMetadata.height)
       .toBuffer();
   }
 
   // Apply mask to create transparent background
-  const result = await sharp.default(imageBuffer)
+  const result = await sharp
+    .default(imageBuffer)
     .ensureAlpha()
-    .composite([{
-      input: mask.mask,
-      blend: 'dest-in' as const
-    }])
+    .composite([
+      {
+        input: mask.mask,
+        blend: 'dest-in' as const,
+      },
+    ])
     .png({ compressionLevel: 6 })
     .toBuffer();
 
@@ -140,7 +162,7 @@ function parseHexColor(hex: string): { r: number; g: number; b: number } {
     return {
       r: parseInt(cleanHex[0] + cleanHex[0], 16),
       g: parseInt(cleanHex[1] + cleanHex[1], 16),
-      b: parseInt(cleanHex[2] + cleanHex[2], 16)
+      b: parseInt(cleanHex[2] + cleanHex[2], 16),
     };
   }
 
@@ -149,7 +171,7 @@ function parseHexColor(hex: string): { r: number; g: number; b: number } {
     return {
       r: parseInt(cleanHex.substring(0, 2), 16),
       g: parseInt(cleanHex.substring(2, 4), 16),
-      b: parseInt(cleanHex.substring(4, 6), 16)
+      b: parseInt(cleanHex.substring(4, 6), 16),
     };
   }
 
@@ -162,14 +184,15 @@ function parseHexColor(hex: string): { r: number; g: number; b: number } {
 export function createSimpleMask(
   imageBuffer: Buffer,
   backgroundColor: string,
-  tolerance: number = 30
+  tolerance: number = 30,
 ): Promise<Buffer> {
   logger.info('Creating simple mask', { backgroundColor, tolerance });
 
   // This is a simplified version - real implementation would use color distance
   const { r: bgR, g: bgG, b: bgB } = parseHexColor(backgroundColor);
 
-  return sharp.default(imageBuffer)
+  return sharp
+    .default(imageBuffer)
     .raw()
     .toBuffer()
     .then(async (data) => {
@@ -189,9 +212,7 @@ export function createSimpleMask(
 
           // Calculate color distance
           const distance = Math.sqrt(
-            Math.pow(r - bgR, 2) +
-            Math.pow(g - bgG, 2) +
-            Math.pow(b - bgB, 2)
+            Math.pow(r - bgR, 2) + Math.pow(g - bgG, 2) + Math.pow(b - bgB, 2),
           );
 
           // If distance is greater than tolerance, it's foreground
@@ -199,8 +220,11 @@ export function createSimpleMask(
         }
       }
 
-      return sharp.default(maskData, {
-        raw: { width, height, channels: 1 }
-      }).png().toBuffer();
+      return sharp
+        .default(maskData, {
+          raw: { width, height, channels: 1 },
+        })
+        .png()
+        .toBuffer();
     });
 }

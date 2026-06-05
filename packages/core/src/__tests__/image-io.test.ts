@@ -1,6 +1,14 @@
 import * as path from 'path';
 import * as fs from 'fs/promises';
-import { loadImage, loadImageFromBuffer, saveImage, getImageMetadata, createProcessedImage, resizeImage, SUPPORTED_FORMATS } from '../utils/image-io';
+import {
+  loadImage,
+  loadImageFromBuffer,
+  saveImage,
+  getImageMetadata,
+  createProcessedImage,
+  resizeImage,
+  SUPPORTED_FORMATS,
+} from '../utils/image-io';
 import { createTestImage, saveFixture, createTestFixtures } from './fixtures';
 
 describe('Image IO', () => {
@@ -51,7 +59,10 @@ describe('Image IO', () => {
 
       await saveImage(image, outputPath);
 
-      const exists = await fs.access(outputPath).then(() => true).catch(() => false);
+      const exists = await fs
+        .access(outputPath)
+        .then(() => true)
+        .catch(() => false);
       expect(exists).toBe(true);
 
       // Verify saved image

@@ -13,9 +13,9 @@ A clear and concise description of what the bug is.
 
 ## Steps to reproduce / 重现步骤
 
-1. 
-2. 
-3. 
+1.
+2.
+3.
 
 ## Expected behavior / 期望行为
 
