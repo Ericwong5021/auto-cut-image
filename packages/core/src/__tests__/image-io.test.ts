@@ -18,10 +18,6 @@ describe('Image IO', () => {
     await createTestFixtures();
   });
 
-  afterAll(async () => {
-    await fs.rm(fixturesDir, { recursive: true, force: true });
-  });
-
   describe('loadImage', () => {
     it('should load a PNG image', async () => {
       const filePath = path.join(fixturesDir, 'red.png');

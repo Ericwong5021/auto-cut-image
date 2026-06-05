@@ -13,8 +13,10 @@ describe('Batch Processing', () => {
     await fs.mkdir(outputDir, { recursive: true });
   });
 
-  afterAll(async () => {
-    await fs.rm(fixturesDir, { recursive: true, force: true });
+  afterEach(async () => {
+    // Clean up output directory after each test
+    await fs.rm(outputDir, { recursive: true, force: true });
+    await fs.mkdir(outputDir, { recursive: true });
   });
 
   describe('getImageFiles', () => {
