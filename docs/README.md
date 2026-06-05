@@ -13,5 +13,5 @@ This directory contains detailed documentation for Auto Cut Image.
 ## Quick Links
 
 - [README](../README.md) - Project overview
-- [GitHub Issues](https://github.com/your-username/auto-cut-image/issues) - Report bugs
-- [GitHub Discussions](https://github.com/your-username/auto-cut-image/discussions) - Ask questions
+- [GitHub Issues](https://github.com/Ericwong5021/auto-cut-image/issues) - Report bugs
+- [GitHub Discussions](https://github.com/Ericwong5021/auto-cut-image/discussions) - Ask questions

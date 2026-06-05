@@ -77,7 +77,7 @@ Options:
 
 ```bash
 # Clone the repository
-git clone https://github.com/your-username/auto-cut-image.git
+git clone https://github.com/Ericwong5021/auto-cut-image.git
 cd auto-cut-image
 
 # Install dependencies
@@ -191,7 +191,7 @@ Options:
 
 ```bash
 # 克隆仓库
-git clone https://github.com/your-username/auto-cut-image.git
+git clone https://github.com/Ericwong5021/auto-cut-image.git
 cd auto-cut-image
 
 # 安装依赖
